@@ -1,0 +1,35 @@
+/*
+  This script will download a list of files to a Google Drive folder. 
+  Simply change the fileUrls and destinationFolder variables to meet your needs,
+  and run from a new project using Google's AppsScript tool - https://script.google.com/home
+  -Jonathan Burns, 1/6/2022
+*/
+
+function main(){  
+  var fileUrls = [
+    "https://static01.nyt.com/images/2019/05/19/world/17grumpycat-1/17grumpycat-1-videoSixteenByNine3000.jpg", 
+    "https://images.techopedia.com/images/uploads/dreamstime_m_123641233.jpg?w=800&h=0&mode=max&quality=70&scale=both",
+    "https://www.baptisthealth.com/assets/documents/bh-system/financial-assistance/translations/english-download-the-application.pdf"
+    ];
+
+  fileUrls.forEach(downloadFileToDollarForDriveFolder);  
+}
+
+function downloadFileToDollarForDriveFolder(fileUrl) {  
+  var destinationFolder = "1XJ0MKPH-gS4ClLgHD14ZqTkagCqEspB9"; 
+
+  var fileResponse = UrlFetchApp.fetch(fileUrl);
+  var responseCode = fileResponse.getResponseCode();
+
+  if(responseCode == 200){
+    var driveFolder  = DriveApp.getFolderById(destinationFolder);
+
+    if(driveFolder != null){
+      var file = driveFolder.createFile(fileResponse.getBlob());
+      Logger.log({'Response': responseCode, "File" :file.getName(), "Size": file.getSize() });
+    }
+  }
+  else{
+    Logger.log({'Error dowloading from': fileUrl, "Response" : responseCode });
+  }
+}
